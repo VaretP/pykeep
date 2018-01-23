@@ -12,8 +12,9 @@ def update(src_dst):
     if init:
         for mv in src_dst:
             (src, dst) = mv
-            copyfile(dst, src)
-            print("Imported : " + src + " from " + dst)
+            if not os.path.isfile(src) or not filecmp.cmp(src, dst):
+                copyfile(dst, src)
+                print("Imported : " + src + " from " + dst)
     else:
         for mv in src_dst:
             (src, dst) = mv
