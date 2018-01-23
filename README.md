@@ -19,4 +19,4 @@ $ ./pykeep -i
 ```
 And you're all set. Use `./pykeep` to update your files. 
 
-Pykeep keeps a copy of the files you edited in their directory, for example if you edit `i3config` and you have in your conf.pykeep this line : `"i3config" > "../.config/i3/config"` then when you launch pykeep it will create a file called `config_old` in `../.config/i3/config`.
+Pykeep keeps a copy of the files you edited in their directory, for example if you have in your conf.pykeep this line : `"i3config" > "../.config/i3/config"` and you edit `i3config` then when you launch pykeep it will create a copy of `config` called `config_old` in `../.config/i3/config`. 
