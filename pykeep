@@ -6,13 +6,16 @@ from shutil import copyfile
 
 # path to the configuration file
 update_conf = "conf.pykeep"
+
+#Global Values
 init = False
+list_in = []
 
 def update(src_dst):
     if init:
         for mv in src_dst:
             (src, dst) = mv
-            if not os.path.isfile(src) or not filecmp.cmp(src, dst):
+            if not os.path.isfile(src) or (not filecmp.cmp(src, dst) and src in L):
                 copyfile(dst, src)
                 print("Imported : " + src + " from " + dst)
     else:
@@ -51,12 +54,13 @@ def read_line(line):
                     start = True
     return src, dst
 
-def read_conf(i):
+def read_conf(i = False, L = []):
     if not os.path.isfile(update_conf):
         return
     if i == True :
-        global init
+        global init, list_in
         init = True
+        list_in = L
     conf = open(update_conf, "r")
     src_dst = []
     for line in conf:
@@ -77,14 +81,18 @@ def create_config_file():
 
 if __name__ == "__main__":
     l = len(sys.argv)
-    if l > 2:
-        print("too many arguments")
+    if sys.argv[1] == "-i":
+        i, L = 2, []
+        while i < l:
+            L.append(sys.argv[i])
+            i += 1
+        read_conf(True, L)
     else:
         if l == 1:
             if not os.path.isfile(update_conf):
                 print("Can't find the configuration file use -f to create one or verify the path to your file")
             else:
-                read_conf(False)
+                read_conf()
         else:
             if sys.argv[1] == "-f":
                 create_config_file()
@@ -93,7 +101,4 @@ if __name__ == "__main__":
                 if sys.argv[1] == "-h":
                     print("See https://github.com/Dirtyhenki/pykeep")
                 else:
-                    if sys.argv[1] == "-i":
-                        read_conf(True)
-                    else:
-                        print("unknown argument")
+                    print("unknown argument")
