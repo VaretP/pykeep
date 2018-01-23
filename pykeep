@@ -81,7 +81,7 @@ def create_config_file():
 
 if __name__ == "__main__":
     l = len(sys.argv)
-    if sys.argv[1] == "-i":
+    if  l > 2 and sys.argv[1] == "-i":
         i, L = 2, []
         while i < l:
             L.append(sys.argv[i])
