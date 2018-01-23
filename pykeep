@@ -13,6 +13,7 @@ def update(src_dst):
         for mv in src_dst:
             (src, dst) = mv
             copyfile(dst, src)
+            print("Imported : " + src + " from " + dst)
     else:
         for mv in src_dst:
             (src, dst) = mv
@@ -80,7 +81,7 @@ if __name__ == "__main__":
     else:
         if l == 1:
             if not os.path.isfile(update_conf):
-                print("Can't find the configuration file use -i to create one or verify the path to your file")
+                print("Can't find the configuration file use -f to create one or verify the path to your file")
             else:
                 read_conf(False)
         else:
@@ -89,7 +90,7 @@ if __name__ == "__main__":
                 print("created a config file 'conf.pykeep'")
             else:
                 if sys.argv[1] == "-h":
-                    print("help")
+                    print("See https://github.com/Dirtyhenki/pykeep")
                 else:
                     if sys.argv[1] == "-i":
                         read_conf(True)
