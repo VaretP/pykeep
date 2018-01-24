@@ -7,8 +7,6 @@ from shutil import copyfile
 # path to the configuration file
 update_conf = "conf.pykeep"
 
-#Global Values
-
 def update(src_dst, init, back, L):
     if init:
         for mv in src_dst:
@@ -35,7 +33,7 @@ def update(src_dst, init, back, L):
                         copyfile(src, dst)
                         print("Updated : " + src)
                     else:
-                        print("Permission Denied to replace " + dst + " by " + src + "\nTry using root")
+                        print("Permission Denied to replace " + dst + " with " + src + "\nTry using root")
 
 def read_line(line):
     src, dst = "", ""
