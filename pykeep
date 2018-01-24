@@ -8,10 +8,8 @@ from shutil import copyfile
 update_conf = "conf.pykeep"
 
 #Global Values
-init = False
-list_in = []
 
-def update(src_dst):
+def update(src_dst, init, back, L):
     if init:
         for mv in src_dst:
             (src, dst) = mv
@@ -19,15 +17,25 @@ def update(src_dst):
                 copyfile(dst, src)
                 print("Imported : " + src + " from " + dst)
     else:
-        for mv in src_dst:
-            (src, dst) = mv
-            if not filecmp.cmp(src, dst):
-                if os.access(dst,os.W_OK):
-                    copyfile(dst,dst+"_old")
-                    copyfile(src, dst)
-                    print("Updated : " + src)
-                else:
-                    print("Permission Denied to replace " + dst + " by " + src + "\nTry using root")
+        if back:
+            for mv in src_dst:
+                (src, dst) = mv
+                if os.path.isfile(dst + "_old") and src in L:
+                    copyfile(dst + "_old", dst + "_tmp")
+                    copyfile(dst, dst + "_old")
+                    copyfile(dst + "_tmp", dst)
+                    os.remove(dst + "_tmp")
+                    print("Backed : " + dst)
+        else:
+            for mv in src_dst:
+                (src, dst) = mv
+                if not filecmp.cmp(src, dst):
+                    if os.access(dst, os.W_OK):
+                        copyfile(dst, dst + "_old")
+                        copyfile(src, dst)
+                        print("Updated : " + src)
+                    else:
+                        print("Permission Denied to replace " + dst + " by " + src + "\nTry using root")
 
 def read_line(line):
     src, dst = "", ""
@@ -57,13 +65,9 @@ def read_line(line):
                     start = True
     return src, dst
 
-def read_conf(i = False, L = []):
+def read_conf(init, back, L):
     if not os.path.isfile(update_conf):
         return
-    if i == True :
-        global init, list_in
-        init = True
-        list_in = L
     conf = open(update_conf, "r")
     src_dst = []
     for line in conf:
@@ -75,7 +79,7 @@ def read_conf(i = False, L = []):
                 if (os.path.isfile(s) and os.path.isfile(d)) or (init and os.path.isfile(d)): 
                     src_dst.append((s, d))
                 break
-    update(src_dst)
+    update(src_dst, init, back, L)
 
 def create_config_file():
     conffile = open("conf.pykeep","w+")
@@ -84,28 +88,36 @@ def create_config_file():
 
 if __name__ == "__main__":
     l = len(sys.argv)
-    if  l > 2 and sys.argv[1] == "-i":
+    if  l >= 2 and sys.argv[1] == "-i":
         i, L = 2, []
         while i < l:
             L.append(sys.argv[i])
             i += 1
-        read_conf(True, L)
+        read_conf(True, False, L)
     else:
-        if l == 1:
-            if not os.path.isfile(update_conf):
-                print("Can't find the configuration file use -f to create one or verify the path to your file")
-            else:
-                read_conf()
+        if l >= 2 and sys.argv[1] == "-b":
+            if l > 2:
+                i, L = 2, []
+                while i < l:
+                    L.append(sys.argv[i])
+                    i += 1
+                read_conf(False, True, L)
         else:
-            if sys.argv[1] == "-f":
-                yn = "y"
-                if os.path.isfile("conf.pykeep"):
-                    yn = raw_input("You already have a configuration file\nWould you like to replace it ? y/n : ")
-                if yn == "y":
-                    create_config_file()
-                    print("created a config file 'conf.pykeep'")
-            else:
-                if sys.argv[1] == "-h":
-                    print("See https://github.com/Dirtyhenki/pykeep")
+            if l == 1:
+                if not os.path.isfile(update_conf):
+                    print("Can't find the configuration file use -f to create one or verify the path to your file")
                 else:
-                    print("unknown argument : " + sys.argv[1])
+                    read_conf(False, False, [])
+            else:
+                if sys.argv[1] == "-f":
+                    yn = "y"
+                    if os.path.isfile("conf.pykeep"):
+                        yn = raw_input("You already have a configuration file\nWould you like to replace it ? y/n : ")
+                    if yn == "y":
+                        create_config_file()
+                        print("created a config file 'conf.pykeep'")
+                else:
+                    if sys.argv[1] == "-h":
+                        print("See https://github.com/Dirtyhenki/pykeep")
+                    else:
+                        print("Unknown argument : " + sys.argv[1])
