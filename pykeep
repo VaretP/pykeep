@@ -108,4 +108,4 @@ if __name__ == "__main__":
                 if sys.argv[1] == "-h":
                     print("See https://github.com/Dirtyhenki/pykeep")
                 else:
-                    print("unknown argument")
+                    print("unknown argument : " + sys.argv[1])
