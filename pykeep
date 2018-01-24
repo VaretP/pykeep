@@ -98,8 +98,12 @@ if __name__ == "__main__":
                 read_conf()
         else:
             if sys.argv[1] == "-f":
-                create_config_file()
-                print("created a config file 'conf.pykeep'")
+                yn = "y"
+                if os.path.isfile("conf.pykeep"):
+                    yn = raw_input("You already have a configuration file\nWould you like to replace it ? y/n : ")
+                if yn == "y":
+                    create_config_file()
+                    print("created a config file 'conf.pykeep'")
             else:
                 if sys.argv[1] == "-h":
                     print("See https://github.com/Dirtyhenki/pykeep")
