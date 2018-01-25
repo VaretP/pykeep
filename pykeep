@@ -84,22 +84,20 @@ def create_config_file():
     conffile.write("#==============================#\n# -- # Pykeep config file # -- #\n#==============================#\n\n# exemple line :\n# 'i3config' > '../.config/i3/config'")
     conffile.close()
 
+def argv_list(l):
+    L = []
+    for i in range(2, l):
+        L.append(sys.argv[i])
+    return L
+
 if __name__ == "__main__":
     l = len(sys.argv)
     if  l >= 2 and sys.argv[1] == "-i":
-        i, L = 2, []
-        while i < l:
-            L.append(sys.argv[i])
-            i += 1
-        read_conf(True, False, L)
+        read_conf(True, False, argv_list(l))
     else:
         if l >= 2 and sys.argv[1] == "-b":
             if l > 2:
-                i, L = 2, []
-                while i < l:
-                    L.append(sys.argv[i])
-                    i += 1
-                read_conf(False, True, L)
+                read_conf(False, True, argv_list(l))
         else:
             if l == 1:
                 if not os.path.isfile(update_conf):
