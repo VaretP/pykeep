@@ -5,38 +5,44 @@ import filecmp
 from shutil import copyfile
 
 # path to the configuration file
-update_conf = "conf.pykeep"
+update_conf = 'conf.pykeep'
 
 def update(src_dst, init, back, L):
     if init:
         for mv in src_dst:
             (src, dst) = mv
-            if not os.path.isfile(src) or (not filecmp.cmp(src, dst) and src in L):
+            if (not os.path.isfile(src)) \
+              or (not filecmp.cmp(src, dst) and src in L):
                 copyfile(dst, src)
-                print("Imported : " + src + " from " + dst)
+                print('Imported : ' + src + ' from ' + dst)
     else:
         if back:
             for mv in src_dst:
                 (src, dst) = mv
-                if os.path.isfile(dst + "_old") and src in L:
-                    copyfile(dst + "_old", dst + "_tmp")
-                    copyfile(dst, dst + "_old")
-                    copyfile(dst + "_tmp", dst)
-                    os.remove(dst + "_tmp")
-                    print("Backed : " + dst)
+                if os.path.isfile(dst + '_old') and src in L:
+                    if os.access(dst, os.W_OK):
+                        copyfile(dst + '_old', dst + '_tmp')
+                        copyfile(dst, dst + '_old')
+                        copyfile(dst + '_tmp', dst)
+                        os.remove(dst + '_tmp')
+                        print('Backed : ' + dst)
+                    else:
+                        print('Permission Denied to replace ' + dst + ' with '\
+                               + dst + '_old' + '\nTry using root')
         else:
             for mv in src_dst:
                 (src, dst) = mv
                 if not filecmp.cmp(src, dst):
                     if os.access(dst, os.W_OK):
-                        copyfile(dst, dst + "_old")
+                        copyfile(dst, dst + '_old')
                         copyfile(src, dst)
-                        print("Updated : " + src)
+                        print('Updated : ' + src)
                     else:
-                        print("Permission Denied to replace " + dst + " with " + src + "\nTry using root")
+                        print('Permission Denied to replace ' + dst + ' with '\
+                               + src + '\nTry using root')
 
 def read_line(line):
-    src, dst = "", ""
+    src, dst = '', ''
     test, start = False, False 
     b1, b2 = 0, 0
     for char in line:
@@ -53,7 +59,7 @@ def read_line(line):
             else: 
                 start = True
         else:
-            if b1 == 2 and char == ">":
+            if b1 == 2 and char == '>':
                 test = True
                 start = False
             elif b2 == 1:
@@ -64,24 +70,31 @@ def read_line(line):
     return src, dst
 
 def read_conf(init, back, L):
-    if not os.path.isfile(update_conf):
-        return
-    conf = open(update_conf, "r")
-    src_dst = []
-    for line in conf:
-        for char in line:
-            if char == "#":
-                break
-            if char != " ":
-                (s, d) = read_line(line)
-                if (os.path.isfile(s) and os.path.isfile(d)) or (init and os.path.isfile(d)): 
-                    src_dst.append((s, d))
-                break
-    update(src_dst, init, back, L)
+    if os.path.isfile(update_conf):
+        conf = open(update_conf, 'r')
+        src_dst = []
+        for line in conf:
+            for char in line:
+                if char == '#':
+                    break
+                if char != ' ':
+                    (s, d) = read_line(line)
+                    if (os.path.isfile(s) and os.path.isfile(d)) \
+                      or (init and os.path.isfile(d)): 
+                        src_dst.append((s, d))
+                    break
+        update(src_dst, init, back, L)
+    else:
+        print("Can't find 'conf.pykeep'\n \
+               Use '-f' to create a configuration file")
 
 def create_config_file():
-    conffile = open("conf.pykeep","w+")
-    conffile.write("#==============================#\n# -- # Pykeep config file # -- #\n#==============================#\n\n# exemple line :\n# 'i3config' > '../.config/i3/config'")
+    conffile = open('conf.pykeep', 'w+')
+    conffile.write("#==============================#\n \
+                    # -- # Pykeep config file # -- #\n \
+                    #==============================#\n \n \
+                    # exemple line :\n \
+                    # 'i3config' > '../.config/i3/config'")
     conffile.close()
 
 def argv_list(l):
@@ -90,30 +103,33 @@ def argv_list(l):
         L.append(sys.argv[i])
     return L
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     l = len(sys.argv)
-    if  l >= 2 and sys.argv[1] == "-i":
+    if  l >= 2 and sys.argv[1] == '-i':
         read_conf(True, False, argv_list(l))
     else:
-        if l >= 2 and sys.argv[1] == "-b":
+        if l >= 2 and sys.argv[1] == '-b':
             if l > 2:
                 read_conf(False, True, argv_list(l))
         else:
             if l == 1:
                 if not os.path.isfile(update_conf):
-                    print("Can't find the configuration file use -f to create one or verify the path to your file")
+                    print("Can't find the configuration file use -f to create \
+                           one or verify the path to your file")
                 else:
                     read_conf(False, False, [])
             else:
-                if sys.argv[1] == "-f":
-                    yn = "y"
-                    if os.path.isfile("conf.pykeep"):
-                        yn = raw_input("You already have a configuration file\nWould you like to replace it ? y/n : ")
-                    if yn == "y":
+                if sys.argv[1] == '-f':
+                    yn = 'y'
+                    if os.path.isfile('conf.pykeep'):
+                        yn = raw_input('You already have a \
+                                        configuration file\n \
+                                        Would you like to replace it ? y/n : ')
+                    if yn == 'y':
                         create_config_file()
-                        print("created a config file 'conf.pykeep'")
+                        print("Created a config file 'conf.pykeep'")
                 else:
-                    if sys.argv[1] == "-h":
-                        print("See https://github.com/Dirtyhenki/pykeep")
+                    if sys.argv[1] == '-h':
+                        print('See https://github.com/Dirtyhenki/pykeep')
                     else:
-                        print("Unknown argument : " + sys.argv[1])
+                        print('Unknown argument : ' + sys.argv[1])
