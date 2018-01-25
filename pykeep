@@ -39,7 +39,7 @@ def update(src_dst, init, back, L):
                         print('Updated : ' + src)
                     else:
                         print('Permission Denied to replace ' + dst + ' with '\
-                               + src + '\nTry using root')
+                               + src + "\nTry using root")
 
 def read_line(line):
     src, dst = '', ''
@@ -70,31 +70,27 @@ def read_line(line):
     return src, dst
 
 def read_conf(init, back, L):
-    if os.path.isfile(update_conf):
-        conf = open(update_conf, 'r')
-        src_dst = []
-        for line in conf:
-            for char in line:
-                if char == '#':
-                    break
-                if char != ' ':
-                    (s, d) = read_line(line)
-                    if (os.path.isfile(s) and os.path.isfile(d)) \
-                      or (init and os.path.isfile(d)): 
-                        src_dst.append((s, d))
-                    break
-        update(src_dst, init, back, L)
-    else:
-        print("Can't find 'conf.pykeep'\n \
-               Use '-f' to create a configuration file")
+    conf = open(update_conf, 'r')
+    src_dst = []
+    for line in conf:
+        for char in line:
+            if char == '#':
+                break
+            if char != ' ':
+                (s, d) = read_line(line)
+                if (os.path.isfile(s) and os.path.isfile(d)) \
+                  or (init and os.path.isfile(d)): 
+                    src_dst.append((s, d))
+                break
+    update(src_dst, init, back, L)
 
 def create_config_file():
     conffile = open('conf.pykeep', 'w+')
-    conffile.write("#==============================#\n \
-                    # -- # Pykeep config file # -- #\n \
-                    #==============================#\n \n \
-                    # exemple line :\n \
-                    # 'i3config' > '../.config/i3/config'")
+    conffile.write("#==============================#\n"
+                   "# -- # Pykeep config file # -- #\n"
+                   "#==============================#\n \n"
+                   "# exemple line :\n"
+                   "# 'i3config' > '../.config/i3/config'")
     conffile.close()
 
 def argv_list(l):
@@ -114,17 +110,17 @@ if __name__ == '__main__':
         else:
             if l == 1:
                 if not os.path.isfile(update_conf):
-                    print("Can't find the configuration file use -f to create \
-                           one or verify the path to your file")
+                    print("Can't find the configuration file use -f to create"
+                          ' one or verify the path to your file')
                 else:
                     read_conf(False, False, [])
             else:
                 if sys.argv[1] == '-f':
                     yn = 'y'
                     if os.path.isfile('conf.pykeep'):
-                        yn = raw_input('You already have a \
-                                        configuration file\n \
-                                        Would you like to replace it ? y/n : ')
+                        yn = raw_input('You already have a'
+                                       'configuration file\n'
+                                       'Would you like to replace it ? y/n : ')
                     if yn == 'y':
                         create_config_file()
                         print("Created a config file 'conf.pykeep'")
