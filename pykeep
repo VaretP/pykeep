@@ -28,7 +28,7 @@ def update(src_dst, init, back, L):
                         print('Backed : ' + dst)
                     else:
                         print('Permission Denied to replace ' + dst + ' with '\
-                               + dst + '_old' + '\nTry using root')
+                              + dst + '_old' + '\nTry using root')
         else:
             for mv in src_dst:
                 (src, dst) = mv
@@ -46,7 +46,7 @@ def read_line(line):
     test, start = False, False 
     b1, b2 = 0, 0
     for char in line:
-	if char == chr(34) or char == chr(44):
+	if char == chr(34) or char == chr(39):
             if b1 < 2:
                 b1 += 1
             elif test:
@@ -77,10 +77,12 @@ def read_conf(init, back, L):
             if char == '#':
                 break
             if char != ' ':
-                (s, d) = read_line(line)
-                if (os.path.isfile(s) and os.path.isfile(d)) \
-                  or (init and os.path.isfile(d)): 
-                    src_dst.append((s, d))
+                (src, dst) = read_line(line)
+                #dst = home + dst
+                #print(dst)
+                if (os.path.isfile(src) and os.path.isfile(dst)) \
+                  or (init and os.path.isfile(dst)): 
+                    src_dst.append((src, dst))
                 break
     update(src_dst, init, back, L)
 
