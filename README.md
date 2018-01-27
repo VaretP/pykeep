@@ -9,7 +9,6 @@ Keep your config files at the same place and edit them without changing director
 ```
 $ git clone https://github.com/Dirtyhenki/pykeep
 $ cd pykeep/
-$ chmod +x pykeep
 $ ./pykeep -f 
 ```
 
