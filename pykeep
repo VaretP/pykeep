@@ -46,7 +46,7 @@ def read_line(line):
     test, start = False, False 
     b1, b2 = 0, 0
     for char in line:
-	if char == chr(34) or char == chr(39):
+        if char == chr(34) or char == chr(39):
             if b1 < 2:
                 b1 += 1
             elif test:
