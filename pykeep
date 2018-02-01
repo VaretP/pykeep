@@ -78,8 +78,6 @@ def read_conf(init, back, L):
                 break
             if char != ' ':
                 (src, dst) = read_line(line)
-                #dst = home + dst
-                #print(dst)
                 if (os.path.isfile(src) and os.path.isfile(dst)) \
                   or (init and os.path.isfile(dst)): 
                     src_dst.append((src, dst))
