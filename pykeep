@@ -7,12 +7,13 @@ from shutil import copyfile
 # path to the configuration file
 update_conf = 'conf.pykeep'
 
+
 def update(src_dst, init, back, L):
     if init:
         for mv in src_dst:
             (src, dst) = mv
             if (not os.path.isfile(src)) \
-              or (not filecmp.cmp(src, dst) and src in L):
+               or (not filecmp.cmp(src, dst) and src in L):
                 copyfile(dst, src)
                 print('Imported : ' + src + ' from ' + dst)
     else:
@@ -27,7 +28,7 @@ def update(src_dst, init, back, L):
                         os.remove(dst + '_tmp')
                         print('Backed : ' + dst)
                     else:
-                        print('Permission Denied to replace ' + dst + ' with '\
+                        print('Permission Denied to replace ' + dst + ' with '
                               + dst + '_old' + '\nTry using root')
         else:
             for mv in src_dst:
@@ -38,25 +39,26 @@ def update(src_dst, init, back, L):
                         copyfile(src, dst)
                         print('Updated : ' + src)
                     else:
-                        print('Permission Denied to replace ' + dst + ' with '\
-                               + src + "\nTry using root")
+                        print('Permission Denied to replace ' + dst + ' with '
+                              + src + "\nTry using root")
+
 
 def read_line(line):
     src, dst = '', ''
-    test, start = False, False 
+    test, start = False, False
     b1, b2 = 0, 0
     for char in line:
         if char == chr(34) or char == chr(39):
             if b1 < 2:
                 b1 += 1
             elif test:
-                b2 +=1
+                b2 += 1
                 if b2 == 2:
                     break
         if b1 == 1:
             if start:
                 src += char
-            else: 
+            else:
                 start = True
         else:
             if b1 == 2 and char == '>':
@@ -65,9 +67,10 @@ def read_line(line):
             elif b2 == 1:
                 if start:
                     dst += char
-                else: 
+                else:
                     start = True
     return src, dst
+
 
 def read_conf(init, back, L):
     conf = open(update_conf, 'r')
@@ -79,10 +82,11 @@ def read_conf(init, back, L):
             if char != ' ':
                 (src, dst) = read_line(line)
                 if (os.path.isfile(src) and os.path.isfile(dst)) \
-                  or (init and os.path.isfile(dst)): 
+                   or (init and os.path.isfile(dst)):
                     src_dst.append((src, dst))
                 break
     update(src_dst, init, back, L)
+
 
 def create_config_file():
     conffile = open('conf.pykeep', 'w+')
@@ -93,22 +97,24 @@ def create_config_file():
                    "# 'i3config' > '../.config/i3/config'")
     conffile.close()
 
+
 def argv_list(l):
     L = []
     for i in range(2, l):
         L.append(sys.argv[i])
     return L
 
+
 if __name__ == '__main__':
-    l = len(sys.argv)
-    if  l >= 2 and sys.argv[1] == '-i':
-        read_conf(True, False, argv_list(l))
+    argv_len = len(sys.argv)
+    if argv_len >= 2 and sys.argv[1] == '-i':
+        read_conf(True, False, argv_list(argv_len))
     else:
-        if l >= 2 and sys.argv[1] == '-b':
-            if l > 2:
-                read_conf(False, True, argv_list(l))
+        if argv_len >= 2 and sys.argv[1] == '-b':
+            if argv_len > 2:
+                read_conf(False, True, argv_list(argv_len))
         else:
-            if l == 1:
+            if argv_len == 1:
                 if not os.path.isfile(update_conf):
                     print("Can't find the configuration file use -f to create"
                           ' one or verify the path to your file')
