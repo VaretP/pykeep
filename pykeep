@@ -8,6 +8,14 @@ from shutil import copyfile
 update_conf = 'conf.pykeep'
 
 
+def old_file(path):
+    (path_head, path_tail) = os.path.split(path)
+    path_tail = '.' + path_tail + '_old'
+    if path_head == '':
+        return path_tail
+    return path_head + '/' + path_tail
+
+
 def update(src_dst, init, back, L):
     if init:
         for mv in src_dst:
@@ -20,22 +28,23 @@ def update(src_dst, init, back, L):
         if back:
             for mv in src_dst:
                 (src, dst) = mv
-                if os.path.isfile(dst + '_old') and src in L:
+                dst_old = old_file(dst)
+                if os.path.isfile(dst_old) and src in L:
                     if os.access(dst, os.W_OK):
-                        copyfile(dst + '_old', dst + '_tmp')
-                        copyfile(dst, dst + '_old')
+                        copyfile(dst_old, dst + '_tmp')
+                        copyfile(dst, dst_old)
                         copyfile(dst + '_tmp', dst)
                         os.remove(dst + '_tmp')
                         print('Backed : ' + dst)
                     else:
                         print('Permission Denied to replace ' + dst + ' with '
-                              + dst + '_old' + '\nTry using root')
+                              + dst_old + '\nTry using root')
         else:
             for mv in src_dst:
                 (src, dst) = mv
                 if not filecmp.cmp(src, dst):
                     if os.access(dst, os.W_OK):
-                        copyfile(dst, dst + '_old')
+                        copyfile(dst, old_file(dst))
                         copyfile(src, dst)
                         print('Updated : ' + src)
                     else:
