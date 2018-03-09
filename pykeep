@@ -10,7 +10,7 @@ update_conf = 'conf.pykeep'
 
 
 def old_file(path):
-    (path_head, path_tail)  = os.path.split(path)
+    (path_head, path_tail) = os.path.split(path)
     path_tail = '.' + path_tail + '_old'
     if path_head == '':
         return path_tail
@@ -42,17 +42,17 @@ def update(src_dst, init, back, check, L):
     elif check:
         for mv in src_dst:
             (src, dst) = mv
-            (src_head, src_tail)  = os.path.split(src)
+            (src_head, src_tail) = os.path.split(src)
             if os.path.isfile(src) and os.path.isfile(dst):
-                src_mtime = time.ctime(os.path.getmtime(src)) 
+                src_mtime = time.ctime(os.path.getmtime(src))
                 dst_mtime = time.ctime(os.path.getmtime(dst))
                 if src_mtime < dst_mtime or filecmp.cmp(src, dst):
                     print(src_tail + ' is up to date')
                 elif src_mtime > dst_mtime or not filecmp.cmp(src, dst):
                     print(src_tail + " needs to be updated, use './pykeep'")
-                else: 
+                else:
                     print(src_tail + " is older than destination, use "
-                            "'./pykeep -i " + src_tail + "' to update it")
+                          "'./pykeep -i " + src_tail + "' to update it")
     else:
         for mv in src_dst:
             (src, dst) = mv
@@ -111,7 +111,7 @@ def read_conf(init, back, check, L):
                     break
         update(src_dst, init, back, check, L)
     else:
-        print("Can't find any configuration file, use './pykeep -f'" 
+        print("Can't find any configuration file, use './pykeep -f'"
               " to create one")
 
 
@@ -150,9 +150,9 @@ if __name__ == '__main__':
                 if sys.argv[1] == '-f':
                     yn = 'y'
                     if os.path.isfile('conf.pykeep'):
-                        yn = raw_input('You already have a'
+                        yn = str(input('You already have a'
                                        'configuration file\n'
-                                       'Would you like to replace it ? y/n : ')
+                                       'Would you like to replace it ? y/n: '))
                     if yn == 'y':
                         create_config_file()
                         print("Created a config file 'conf.pykeep'")
