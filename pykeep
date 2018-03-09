@@ -48,7 +48,7 @@ def update(src_dst, init, back, check, L):
                 dst_mtime = time.ctime(os.path.getmtime(dst))
                 if src_mtime < dst_mtime or filecmp.cmp(src, dst):
                     print(src_tail + ' is up to date')
-                elif src_mtime > dst_mtime:
+                elif src_mtime > dst_mtime or not filecmp.cmp(src, dst):
                     print(src_tail + " needs to be updated, use './pykeep'")
                 else: 
                     print(src_tail + " is older than destination, use "
