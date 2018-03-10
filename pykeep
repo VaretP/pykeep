@@ -7,7 +7,6 @@ from shutil import copyfile
 # path to the configuration file
 update_conf = 'conf.pykeep'
 
-
 def old_file(path):
     (path_head, path_tail)  = os.path.split(path)
     path_tail = '.' + path_tail + '_old'
@@ -128,30 +127,25 @@ def argv_list(l):
 
 if __name__ == '__main__':
     argv_len = len(sys.argv)
-    if argv_len >= 2 and sys.argv[1] == '-i':
-        read_conf(True, False, False, argv_list(argv_len))
-    else:
-        if argv_len >= 2:
-            if sys.argv[1] == '-b':
-                if argv_len > 2:
-                    read_conf(False, True, False, argv_list(argv_len))
-            elif sys.argv[1] == '-c':
-                read_conf(False, False, True, argv_list(argv_len))
+    if argv_len >= 2:
+        if sys.argv[1] == '-i':
+            read_conf(True, False, False, argv_list(argv_len))
+        elif sys.argv[1] == '-b':
+            read_conf(False, True, False, argv_list(argv_len))
+        elif sys.argv[1] == '-c':
+            read_conf(False, False, True, argv_list(argv_len))
+        elif sys.argv[1] == '-h':
+            print('See https://github.com/Dirtyhenki/pykeep')
+        elif sys.argv[1] == '-f':
+            yn = 'y'
+            if os.path.isfile('conf.pykeep'):
+                yn = str(input('You already have a'
+                               'configuration file\n'
+                               'Would you like to replace it ? y/n : '))
+            if yn == 'y':
+                create_config_file()
+                print("Created a config file 'conf.pykeep'")
         else:
-            if argv_len == 1:
-                read_conf(False, False, False, [])
-            else:
-                if sys.argv[1] == '-f':
-                    yn = 'y'
-                    if os.path.isfile('conf.pykeep'):
-                        yn = raw_input('You already have a'
-                                       'configuration file\n'
-                                       'Would you like to replace it ? y/n : ')
-                    if yn == 'y':
-                        create_config_file()
-                        print("Created a config file 'conf.pykeep'")
-                else:
-                    if sys.argv[1] == '-h':
-                        print('See https://github.com/Dirtyhenki/pykeep')
-                    else:
-                        print('Unknown argument : ' + sys.argv[1])
+            print('Unknown argument : ' + sys.argv[1])
+    else:
+        read_conf(False, False, False, [])
