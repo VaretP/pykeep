@@ -44,7 +44,7 @@ def update(src_dst, init, back, check, L):
             if os.path.isfile(src) and os.path.isfile(dst):
                 if filecmp.cmp(src, dst):
                     print(src_tail + ' is up to date')
-                elif not filecmp.cmp(src, dst):
+                else:
                     print(src_tail + " can be updated, use './pykeep'")
     else:
         for mv in src_dst:
