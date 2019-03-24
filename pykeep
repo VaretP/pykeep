@@ -112,6 +112,7 @@ def read_conf(op):
     if not os.path.isfile(config_file):
         print("Can't find any configuration file, use './pykeep -f'" 
               " to create one")
+        return
     conf = open(config_file, 'r')
     src_dst = []
     for line in conf:
