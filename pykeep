@@ -4,6 +4,14 @@ import sys
 import filecmp
 from shutil import copyfile
 
+class colors:
+    BLUE = '\033[94m'
+    GREEN = '\033[92m'
+    WARNING = '\033[93m'
+    FAIL = '\033[91m'
+    END = '\033[0m'
+    BOLD = '\033[1m'
+
 # Path to the configuration file
 config_file = 'conf.pykeep'
 
@@ -24,7 +32,8 @@ def init(src_dst):
         if (not os.path.isfile(src)) \
            or (not filecmp.cmp(src, dst) and src in sys.argv):
             copyfile(dst, src)
-            print('Imported : ' + src + ' from ' + dst)
+            print(colors.GREEN + 'Imported : ' + src + ' from ' + dst \
+                  + colors.END)
 
 
 # Backup a file
@@ -38,10 +47,10 @@ def back(src_dst):
                 copyfile(dst, dst_old)
                 copyfile(dst + '_tmp', dst)
                 os.remove(dst + '_tmp')
-                print('Backed : ' + dst)
+                print(colors.GREEN + 'Backed : ' + dst + colors.END)
             else:
-                print('Permission Denied to replace ' + dst + ' with '
-                      + dst_old + '\nTry using root')
+                print(colors.FAIL + 'Permission Denied to replace ' + dst \
+                      + ' with ' + dst_old + '\nTry using root' + colors.END)
 
 
 # Check if files need to be updated
@@ -51,9 +60,10 @@ def check(src_dst):
         if os.path.isfile(src) and os.path.isfile(dst):
             (src_head, src_tail)  = os.path.split(src)
             if filecmp.cmp(src, dst):
-                print(src_tail + ' is up to date')
+                print(colors.GREEN + src_tail + ' is up to date' + colors.END)
             else:
-                print(src_tail + " can be updated, use './pykeep'")
+                print(colors.WARNING + "=> " + src_tail \
+                      + " can be updated, use './pykeep'" + colors.END)
 
 
 # Update files
@@ -71,10 +81,11 @@ def update(src_dst, op):
                 if os.access(dst, os.W_OK):
                     copyfile(dst, old_file(dst))
                     copyfile(src, dst)
-                    print('Updated : ' + src)
+                    print(colors.GREEN + 'Updated : ' + src + colors.END)
                 else:
-                    print('Permission Denied to replace ' + dst + ' with '
-                          + src + "\nTry using root")
+                    print(colors.FAIL + 'Permission Denied to replace ' \
+                          + dst + ' with ' + src + "\nTry using root" \
+                          + colors.END)
 
 
 # Parse a line in the configuration file
@@ -110,8 +121,8 @@ def read_line(line):
 # Read the config_file
 def read_conf(op):
     if not os.path.isfile(config_file):
-        print("Can't find any configuration file, use './pykeep -f'" 
-              " to create one")
+        print(colors.WARNING + "Can't find any configuration file,"
+              "use './pykeep -f' to create one" + colors.END)
         return
     conf = open(config_file, 'r')
     src_dst = []
@@ -154,13 +165,16 @@ if __name__ == '__main__':
         elif sys.argv[1] == '-f':
             yn = 'y'
             if os.path.isfile('conf.pykeep'):
-                yn = str(input('You already have a'
+                yn = str(input(colors.BLUE + 'You already have a'
                                'configuration file\n'
-                               'Would you like to replace it ? y/N : '))
+                               'Would you like to replace it ? y/N : ' \
+                                + colors.END))
             if yn in ['y', 'Y']:
                 create_config_file()
-                print("Created a config file 'conf.pykeep'")
+                print(colors.GREEN + "Created a config file 'conf.pykeep'" \
+                      + colors.END)
         else:
-            print('Unknown argument : ' + sys.argv[1])
+            print(colors.FAIL + 'Unknown argument : ' + sys.argv[1] \
+                  + colors.END)
     else:
         read_conf('update')
