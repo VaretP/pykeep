@@ -55,9 +55,11 @@ def back(src_dst):
 
 # Check if files need to be updated
 def check(src_dst):
+    check_file = True if len(sys.argv) > 2 else False
     for mv in src_dst:
         (src, dst) = mv
-        if os.path.isfile(src) and os.path.isfile(dst):
+        if os.path.isfile(src) and os.path.isfile(dst) \
+                and (not check_file or src in sys.argv) :
             (src_head, src_tail)  = os.path.split(src)
             if filecmp.cmp(src, dst):
                 print(colors.GREEN + src_tail + ' is up to date' + colors.END)
@@ -153,7 +155,7 @@ def create_config_file():
 
 if __name__ == '__main__':
     argv_len = len(sys.argv)
-    if argv_len >= 2:
+    if argv_len > 1:
         if sys.argv[1] == '-i':
             read_conf('init')
         elif sys.argv[1] == '-b':
